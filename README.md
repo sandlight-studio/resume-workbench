@@ -34,14 +34,14 @@ WeasyPrint, and keep role-specific variants beside curated interview notes.
 macOS:
 
 ```bash
-brew install pandoc pango gdk-pixbuf libffi
+brew install node pandoc pango gdk-pixbuf libffi
 ```
 
 Debian/Ubuntu:
 
 ```bash
 sudo apt-get update
-sudo apt-get install pandoc python3-venv python3-pip libpango-1.0-0 libpangoft2-1.0-0
+sudo apt-get install nodejs npm pandoc python3-venv python3-pip libpango-1.0-0 libpangoft2-1.0-0
 ```
 
 Then on either platform:
@@ -96,6 +96,15 @@ dist/          Generated local PDFs and previews (ignored)
 archive/       Optional local snapshots (ignored)
 ```
 
+## Development workflow
+
+- `main` is the protected release branch. Direct pushes, force pushes, and
+  branch deletion are blocked.
+- `dev` is the integration branch for ongoing work. Open contribution PRs
+  against `dev`.
+- For a release, open a `dev` to `main` PR, wait for CI, merge it, then tag the
+  merge commit.
+
 ## Using this template safely
 
 Create a **private** repository from this template before adding real data.
@@ -103,6 +112,18 @@ Do not commit personal contact information, employment history, or generated
 PDFs to a public fork. `npm run privacy:check` is a guardrail, not a guarantee;
 review the full Git history before changing a personalized repository to
 public.
+
+The local privacy check examines the exact staged snapshot. Stage everything
+you intend to commit, inspect the staged diff, and then run the check:
+
+```bash
+git add --all
+git diff --cached
+npm run privacy:check
+```
+
+Untracked and unstaged content is outside that snapshot. CI adds a full-history
+Gitleaks scan, but neither check replaces a manual privacy review.
 
 ## Design and fonts
 

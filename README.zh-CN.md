@@ -33,14 +33,14 @@
 macOS：
 
 ```bash
-brew install pandoc pango gdk-pixbuf libffi
+brew install node pandoc pango gdk-pixbuf libffi
 ```
 
 Debian/Ubuntu：
 
 ```bash
 sudo apt-get update
-sudo apt-get install pandoc python3-venv python3-pip libpango-1.0-0 libpangoft2-1.0-0
+sudo apt-get install nodejs npm pandoc python3-venv python3-pip libpango-1.0-0 libpangoft2-1.0-0
 ```
 
 然后在任一平台执行：
@@ -54,19 +54,21 @@ npm run check
 npm run build:all
 ```
 
-PDF 输出到被 Git 忽略的 `dist/`。常用命令：
-
+PDF 输出到被 Git 忽略的 `dist/`。
 原生 Windows 暂不属于支持范围，请使用 WSL2 或 Linux 容器。
 
-```bash
-npm run build
-npm run build:english
-npm run build:java
-npm run build:backend
-npm run build:fullstack
-npm run qa -- default
-npm test
-```
+## 常用命令
+
+| 命令 | 用途 |
+|---|---|
+| `npm run build` | 构建默认中文简历 |
+| `npm run build:english` | 构建英文简历 |
+| `npm run build:java` | 构建 Java 岗位简历 |
+| `npm run build:backend` | 构建后端岗位简历 |
+| `npm run build:fullstack` | 构建全栈岗位简历 |
+| `npm run build:all` | 构建全部岗位变体 |
+| `npm run qa -- default` | 构建简历，并在工具可用时生成预览图 |
+| `npm test` | 执行结构、样式和隐私检查 |
 
 使用本机已安装的文楷字体栈：
 
@@ -81,11 +83,41 @@ RESUME_NAME_ZH="候选人" YOE_CN="5年" ./scripts/build.sh backend
 RESUME_NAME_EN="Candidate" YOE_EN="5YOE" ./scripts/build.sh english
 ```
 
+## 目录结构
+
+```text
+resume/        虚构的中英文简历变体
+interview/     虚构的面试准备示例
+styles/        A4 页面、字体栈与主题样式
+scripts/       构建、归档、QA、清理和隐私工具
+tests/         Shell 接口与内容测试
+dist/          本地生成的 PDF 和预览图（已忽略）
+archive/       可选的本地归档（已忽略）
+```
+
+## 开发流程
+
+- `main` 是受保护的发布分支，禁止直接推送、强推和删除。
+- `dev` 是日常迭代的集成分支；贡献代码时请向 `dev` 发起 PR。
+- 发布时从 `dev` 向 `main` 发起 PR，等待 CI 通过并合并，再为合并提交打 tag。
+
 ## 安全使用
 
 加入真实履历前，请从本项目创建一个**私有仓库**。不要把真实联系方式、工作经历、
 学校信息或生成的 PDF 提交到公开 fork。`npm run privacy:check` 只能拦截常见错误；
 个性化仓库改为公开前仍须人工审查完整 Git 历史。
+
+本地隐私检查只检查精确的暂存区快照。提交前请先暂存全部目标文件、检查差异，
+再运行隐私检查：
+
+```bash
+git add --all
+git diff --cached
+npm run privacy:check
+```
+
+未跟踪和未暂存的内容不在该快照中。CI 会额外使用 Gitleaks 扫描完整历史，但两者都
+不能替代人工隐私审查。
 
 ## 设计、字体与许可
 
