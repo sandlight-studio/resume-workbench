@@ -1,0 +1,34 @@
+h1 {
+  color: var(--accent-color);
+  font-size: 23pt;
+  font-weight: 700;
+  letter-spacing: 1pt;
+}
+
+h2 {
+  border-left: 2.5pt solid var(--accent-color);
+  color: var(--accent-color);
+  font-size: 13pt;
+  margin: 8pt 0 5pt;
+  padding-left: 6pt;
+}
+
+h3 {
+  color: var(--ink-color);
+  font-size: 10.5pt;
+  margin: 7pt 0 2pt;
+}
+
+strong {
+  color: var(--accent-color);
+}
+
+.resume-header__role {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.resume-header__personal,
+.resume-header__contact {
+  color: var(--muted-color);
+}

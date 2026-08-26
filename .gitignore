@@ -1,0 +1,19 @@
+node_modules/
+.venv/
+dist/
+archive/
+local/
+.env
+.env.*
+!.env.example
+*.pdf
+*.docx
+*.ttf
+*.otf
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

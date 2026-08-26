@@ -1,0 +1,22 @@
+{
+  "name": "resume-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A privacy-first Markdown resume and interview-prep workbench",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "bash scripts/build.sh default",
+    "build:default": "bash scripts/build.sh default",
+    "build:english": "bash scripts/build.sh english",
+    "build:java": "bash scripts/build.sh java",
+    "build:backend": "bash scripts/build.sh backend",
+    "build:fullstack": "bash scripts/build.sh fullstack",
+    "build:all": "bash scripts/build-all.sh",
+    "archive": "bash scripts/archive.sh default",
+    "check": "bash scripts/check.sh",
+    "qa": "bash scripts/qa.sh",
+    "privacy:check": "bash scripts/privacy-check.sh",
+    "clean": "bash scripts/clean.sh",
+    "test": "bash tests/structure-alignment.sh && bash tests/css-invariants.sh && bash tests/content-structure.sh && bash tests/privacy-check.sh && bash scripts/privacy-check.sh"
+  }
+}

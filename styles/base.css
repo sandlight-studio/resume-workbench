@@ -1,0 +1,9 @@
+:root {
+  --body-font: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", serif;
+  --body-size: 9.6pt;
+  --line-height: 1.48;
+  --ink-color: #172033;
+  --muted-color: #5d6676;
+  --rule-color: #aab2bf;
+  --accent-color: #334e68;
+}

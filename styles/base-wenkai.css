@@ -1,0 +1,9 @@
+:root {
+  --body-font: "LXGW WenKai", "LXGW WenKai GB", "Noto Serif CJK SC", "Songti SC", serif;
+  --body-size: 9.8pt;
+  --line-height: 1.5;
+  --ink-color: #172033;
+  --muted-color: #5d6676;
+  --rule-color: #aab2bf;
+  --accent-color: #334e68;
+}
