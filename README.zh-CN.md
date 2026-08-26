@@ -11,6 +11,14 @@
 
 > 本仓库中的人物、公司、学校、项目、时间、指标和面试回答全部是虚构的教学示例。
 
+## 效果预览
+
+<p align="center">
+  <a href="assets/resume-preview.png">
+    <img src="assets/resume-preview.png" alt="Resume Workbench 生成的虚构中文简历" width="720">
+  </a>
+</p>
+
 ## 功能
 
 - 中英文简历排版。
