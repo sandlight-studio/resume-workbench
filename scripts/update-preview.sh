@@ -24,7 +24,8 @@ trap cleanup EXIT
 BUILD_OUTPUT_PATH_FILE="${BUILD_PATH_FILE}" "${PROJECT_ROOT}/scripts/build.sh" default >/dev/null
 PDF_PATH="$(cat "${BUILD_PATH_FILE}")"
 
-# 144 DPI renders the A4 first page at 1191x1684, the committed asset size.
-pdftoppm -png -r 144 -f 1 -l 1 -singlefile "${PDF_PATH}" "${ASSET_PATH%.png}"
+# 288 DPI renders the A4 first page at 2382x3368 - crisp at 2x on retina
+# displays while keeping the PNG under a few hundred kilobytes.
+pdftoppm -png -r 288 -f 1 -l 1 -singlefile "${PDF_PATH}" "${ASSET_PATH%.png}"
 
 echo "Preview refreshed: assets/resume-preview.png"
