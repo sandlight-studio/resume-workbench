@@ -12,6 +12,10 @@ WeasyPrint, and keep role-specific variants beside curated interview notes.
 > All people, companies, schools, projects, dates, metrics, and interview
 > answers in this repository are fictional teaching examples.
 
+**Using a coding agent?** [AGENTS.md](AGENTS.md) is the single entry point for
+commands, privacy rules, and contribution flow. Claude Code reaches it through
+`CLAUDE.md`; Codex, Gemini CLI, and Cursor read it directly.
+
 ## Preview
 
 <p align="center">

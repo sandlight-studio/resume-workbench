@@ -11,6 +11,10 @@
 
 > 本仓库中的人物、公司、学校、项目、时间、指标和面试回答全部是虚构的教学示例。
 
+**配合编码 Agent 使用？** 命令、隐私规则与贡献流程的统一入口是
+[AGENTS.md](AGENTS.md)：Claude Code 经 `CLAUDE.md` 转发过去，Codex、Gemini CLI
+和 Cursor 直接读取它。
+
 ## 效果预览
 
 <p align="center">
