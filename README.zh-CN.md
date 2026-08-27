@@ -75,6 +75,7 @@ PDF 输出到被 Git 忽略的 `dist/`。
 | `npm run build:fullstack` | 构建全栈岗位简历 |
 | `npm run build:all` | 构建全部岗位变体 |
 | `npm run qa -- default` | 构建简历，并在工具可用时生成预览图 |
+| `npm run preview` | 用默认简历重新生成 `assets/resume-preview.png` |
 | `npm run mine -- --author "<你>" <仓库路径>` | 统计自己在本地仓库中的提交 |
 | `npm test` | 执行结构、样式和隐私检查 |
 
