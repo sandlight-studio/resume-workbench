@@ -91,16 +91,22 @@ is ignored so the marker cannot exist in a checkout, and the variable is unset.
 
 ## Resume structure invariants
 
-`tests/content-structure.sh` matches these literally, so a resume that drops or
-renames a section fails the test suite rather than rendering badly.
+`scripts/check-content.py` (run by `tests/content-structure.sh`) matches these
+literally, so a resume that drops or renames a section fails the test suite
+rather than rendering badly. Variant discovery stays in `config/variants.sh`.
 
-- Chinese variants need all six: `## 岗位优势`, `## 工作经历`, `## 项目经历`,
-  `## 技术能力`, `## 教育背景`, `## 自我评价`.
-- English variants need all five: `## Professional Summary`,
+- Chinese variants need all six, in order: `## 岗位优势`, `## 工作经历`,
+  `## 项目经历`, `## 技术能力`, `## 教育背景`, `## 自我评价`.
+- English variants need all five, in order: `## Professional Summary`,
   `## Work Experience`, `## Selected Projects`, `## Technical Skills`,
   `## Education`.
 - Every variant needs `class="resume-header"` and at least one
   `### Project | Company` heading.
+- Each project entry starts with a date range (`2023.01 - 至今 | 角色` in
+  Chinese, `Jan 2023 - Present | Role` in English), states its stack
+  (`**技术栈：**` / `**Stack:**`), and carries at least one bullet.
+- No unresolved placeholders (`{{...}}`, `【待填】`, `【待核实】`,
+  `[DATA NEEDED`) may survive into a variant.
 
 ## Style and releases
 
