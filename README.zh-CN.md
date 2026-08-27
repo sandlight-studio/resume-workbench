@@ -111,6 +111,8 @@ local/         你的真实内容：证据卡、面试物料、BOSS 直聘文案
 - `main` 是受保护的发布分支，禁止直接推送、强推和删除。
 - `dev` 是日常迭代的集成分支；贡献代码时请向 `dev` 发起 PR。
 - 发布时从 `dev` 向 `main` 发起 PR，等待 CI 通过并合并，再为合并提交打 tag。
+- 一次性配置：`git config core.hooksPath .githooks` 启用 pre-commit 钩子，
+  提交涉及 `resume/` 或 `styles/` 时自动刷新 `assets/resume-preview.png`。
 
 ## 安全使用
 

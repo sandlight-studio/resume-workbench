@@ -111,8 +111,11 @@ rather than rendering badly. Variant discovery stays in `config/variants.sh`.
 ## Style and releases
 
 - Markdown sections use `##`; project headings use `### Project | Company`.
-- After changing resume content or print CSS, run `npm run preview` to refresh
-  `assets/resume-preview.png` before committing.
+- `assets/resume-preview.png` is regenerated automatically by the pre-commit
+  hook in `.githooks/` whenever a commit stages changes under `resume/` or
+  `styles/`. Enable it once per clone with
+  `git config core.hooksPath .githooks`; without the hook (or without the
+  local toolchain), run `npm run preview` before pushing.
 - CSS uses two-space indentation and print units such as `pt` and `mm`.
 - Versions and Git tags use `x.y.z` without a `v` prefix.
 - Use Conventional Commit prefixes such as `feat:`, `fix:`, `docs:`, and

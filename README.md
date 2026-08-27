@@ -116,6 +116,9 @@ local/         Your real content: evidence, interview kit, BOSS profile (ignored
   against `dev`.
 - For a release, open a `dev` to `main` PR, wait for CI, merge it, then tag the
   merge commit.
+- One-time setup: `git config core.hooksPath .githooks` enables a pre-commit
+  hook that refreshes `assets/resume-preview.png` whenever a commit stages
+  resume or style changes.
 
 ## Using this template safely
 
