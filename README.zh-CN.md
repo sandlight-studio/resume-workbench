@@ -26,6 +26,7 @@
 - 本地生成 PDF，不上传简历数据。
 - 虚构的技术故事、HR 回答和故障排查练习。
 - 检查联系方式、二进制成品和本地配置误提交的隐私守卫。
+- 内置新增岗位变体和按 JD 定制的 agent skills。
 - 不附带商业字体文件。
 
 ## 快速开始
@@ -91,6 +92,7 @@ interview/     虚构的面试准备示例
 styles/        A4 页面、字体栈与主题样式
 scripts/       构建、归档、QA、清理和隐私工具
 tests/         Shell 接口与内容测试
+.agents/skills/  Agent skills（软链到 .claude/skills/ 供 Claude Code 读取）
 dist/          本地生成的 PDF 和预览图（已忽略）
 archive/       可选的本地归档（已忽略）
 ```

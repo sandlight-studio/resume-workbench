@@ -27,6 +27,7 @@ WeasyPrint, and keep role-specific variants beside curated interview notes.
 - Local PDF generation with reproducible CSS.
 - Fictional interview stories, HR answers, and troubleshooting exercises.
 - Privacy checks that reject common personal-data and binary-artifact leaks.
+- Bundled agent skills for adding a variant and tailoring to a job posting.
 - No bundled commercial fonts and no resume data sent to a server.
 
 ## Quick start
@@ -92,6 +93,7 @@ interview/     Curated fictional interview-preparation examples
 styles/        A4 page geometry, font stacks, and themes
 scripts/       Build, archive, QA, cleanup, and privacy tooling
 tests/         Shell-based interface and content checks
+.agents/skills/  Agent skills (symlinked into .claude/skills/ for Claude Code)
 dist/          Generated local PDFs and previews (ignored)
 archive/       Optional local snapshots (ignored)
 ```

@@ -20,6 +20,10 @@ npm run qa -- default
 - `styles/`: print CSS; never commit commercial font files.
 - `config/variants.sh`: single source of truth for resume variants.
 - `scripts/`: build, archive, QA, cleanup, and privacy checks.
+- `.agents/skills/`: agent workflows for adding a variant and tailoring to a job.
+  `.claude/skills/` holds symlinks to them, because Claude Code reads only its
+  own directory while Codex and Gemini CLI read only `.agents/skills/`. Edit the
+  real files under `.agents/skills/` and leave the symlinks alone.
 - `dist/` and `archive/`: generated local output; always ignored.
 
 ## Privacy rules
@@ -29,10 +33,26 @@ npm run qa -- default
   commit hashes.
 - Example email addresses must use `example.com`.
 - Do not commit PDF, DOCX, TTF, OTF, `.env`, or local content overrides.
-- Run `npm run privacy:check` before every push.
+- `npm run privacy:check` inspects the **staged snapshot only** (it uses
+  `git grep --cached`). Stage everything first, review the staged diff, then
+  run it: `git add --all && git diff --cached && npm run privacy:check`.
+  Unstaged and untracked content is never scanned.
 - CI also scans commit history with Gitleaks; both checks must pass.
 - Personal forks should be private. Public contributions must retain fictional
   examples.
+
+## Resume structure invariants
+
+`tests/content-structure.sh` matches these literally, so a resume that drops or
+renames a section fails the test suite rather than rendering badly.
+
+- Chinese variants need all six: `## 岗位优势`, `## 工作经历`, `## 项目经历`,
+  `## 技术能力`, `## 教育背景`, `## 自我评价`.
+- English variants need all five: `## Professional Summary`,
+  `## Work Experience`, `## Selected Projects`, `## Technical Skills`,
+  `## Education`.
+- Every variant needs `class="resume-header"` and at least one
+  `### Project | Company` heading.
 
 ## Style and releases
 
@@ -41,3 +61,5 @@ npm run qa -- default
 - Versions and Git tags use `x.y.z` without a `v` prefix.
 - Use Conventional Commit prefixes such as `feat:`, `fix:`, `docs:`, and
   `chore:`.
+- Open contribution PRs against `dev`. To release, open a `dev` to `main` PR,
+  wait for CI, merge, then tag the merge commit and update `CHANGELOG.md`.
