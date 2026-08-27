@@ -28,6 +28,9 @@ WeasyPrint, and keep role-specific variants beside curated interview notes.
 - Fictional interview stories, HR answers, and troubleshooting exercises.
 - Privacy checks that reject common personal-data and binary-artifact leaks.
 - Bundled agent skills for adding a variant and tailoring to a job posting.
+- A skill pipeline from real work to application material: mine your own commits
+  for project highlights, import an existing `.docx`/`.pdf` resume, generate an
+  interview kit, and write a BOSS 直聘 profile.
 - No bundled commercial fonts and no resume data sent to a server.
 
 ## Quick start
@@ -70,6 +73,7 @@ Native Windows is not a supported build target; use WSL2 or a Linux container.
 | `npm run build:fullstack` | Build the full-stack resume |
 | `npm run build:all` | Build every variant |
 | `npm run qa -- default` | Build and render preview images when possible |
+| `npm run mine -- --author "<you>" <repo>` | Survey your own commits in a local repository |
 | `npm test` | Run structure, CSS, and privacy checks |
 
 The build script also supports a locally installed WenKai font stack:
@@ -91,11 +95,12 @@ RESUME_NAME_EN="Candidate" YOE_EN="5YOE" ./scripts/build.sh english
 resume/        Fictional Chinese and English resume variants
 interview/     Curated fictional interview-preparation examples
 styles/        A4 page geometry, font stacks, and themes
-scripts/       Build, archive, QA, cleanup, and privacy tooling
+scripts/       Build, archive, QA, cleanup, mining, and privacy tooling
 tests/         Shell-based interface and content checks
 .agents/skills/  Agent skills (symlinked into .claude/skills/ for Claude Code)
 dist/          Generated local PDFs and previews (ignored)
 archive/       Optional local snapshots (ignored)
+local/         Your real content: evidence, interview kit, BOSS profile (ignored)
 ```
 
 ## Development workflow
@@ -126,6 +131,21 @@ npm run privacy:check
 
 Untracked and unstaged content is outside that snapshot. CI adds a full-history
 Gitleaks scan, but neither check replaces a manual privacy review.
+
+Real personal content belongs in `local/`, which is ignored by Git and rejected
+by the privacy check if it is ever tracked. The agent skills write there by
+default and only target `resume/` and `interview/` once you opt in on this
+machine:
+
+```bash
+mkdir -p local && touch local/.private-ok
+```
+
+That marker also puts `privacy:check` into personal mode, which is what lets a
+private fork commit a real email address and phone number without failing
+`npm test`. It relaxes the contact rules only — tracked binaries, home paths,
+and credential patterns are still rejected. Because `local/` is ignored, the
+marker never travels with a fork, and CI never enters personal mode.
 
 ## Design and fonts
 

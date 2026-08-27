@@ -14,6 +14,7 @@
     "build:all": "bash scripts/build-all.sh",
     "archive": "bash scripts/archive.sh default",
     "check": "bash scripts/check.sh",
+    "mine": "bash scripts/mine-commits.sh",
     "qa": "bash scripts/qa.sh",
     "privacy:check": "bash scripts/privacy-check.sh",
     "clean": "bash scripts/clean.sh",
