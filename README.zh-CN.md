@@ -11,6 +11,10 @@
 
 > 本仓库中的人物、公司、学校、项目、时间、指标和面试回答全部是虚构的教学示例。
 
+**配合编码 Agent 使用？** 命令、隐私规则与贡献流程的统一入口是
+[AGENTS.md](AGENTS.md)：Claude Code 经 `CLAUDE.md` 转发过去，Codex、Gemini CLI
+和 Cursor 直接读取它。
+
 ## 效果预览
 
 <p align="center">
@@ -26,6 +30,9 @@
 - 本地生成 PDF，不上传简历数据。
 - 虚构的技术故事、HR 回答和故障排查练习。
 - 检查联系方式、二进制成品和本地配置误提交的隐私守卫。
+- 内置新增岗位变体和按 JD 定制的 agent skills。
+- 从真实工作到求职材料的技能流水线：从自己的提交里挖项目亮点、导入已有的
+  Word/PDF 简历、生成面试物料、产出 BOSS 直聘在线简历与打招呼语。
 - 不附带商业字体文件。
 
 ## 快速开始
@@ -68,6 +75,8 @@ PDF 输出到被 Git 忽略的 `dist/`。
 | `npm run build:fullstack` | 构建全栈岗位简历 |
 | `npm run build:all` | 构建全部岗位变体 |
 | `npm run qa -- default` | 构建简历，并在工具可用时生成预览图 |
+| `npm run preview` | 用默认简历重新生成 `assets/resume-preview.png` |
+| `npm run mine -- --author "<你>" <仓库路径>` | 统计自己在本地仓库中的提交 |
 | `npm test` | 执行结构、样式和隐私检查 |
 
 使用本机已安装的文楷字体栈：
@@ -89,10 +98,12 @@ RESUME_NAME_EN="Candidate" YOE_EN="5YOE" ./scripts/build.sh english
 resume/        虚构的中英文简历变体
 interview/     虚构的面试准备示例
 styles/        A4 页面、字体栈与主题样式
-scripts/       构建、归档、QA、清理和隐私工具
+scripts/       构建、归档、QA、清理、提交挖掘和隐私工具
 tests/         Shell 接口与内容测试
+.agents/skills/  Agent skills（软链到 .claude/skills/ 供 Claude Code 读取）
 dist/          本地生成的 PDF 和预览图（已忽略）
 archive/       可选的本地归档（已忽略）
+local/         你的真实内容：证据卡、面试物料、BOSS 直聘文案（已忽略）
 ```
 
 ## 开发流程
@@ -100,6 +111,8 @@ archive/       可选的本地归档（已忽略）
 - `main` 是受保护的发布分支，禁止直接推送、强推和删除。
 - `dev` 是日常迭代的集成分支；贡献代码时请向 `dev` 发起 PR。
 - 发布时从 `dev` 向 `main` 发起 PR，等待 CI 通过并合并，再为合并提交打 tag。
+- 一次性配置：`git config core.hooksPath .githooks` 启用 pre-commit 钩子，
+  提交涉及 `resume/` 或 `styles/` 时自动刷新 `assets/resume-preview.png`。
 
 ## 安全使用
 
@@ -118,6 +131,19 @@ npm run privacy:check
 
 未跟踪和未暂存的内容不在该快照中。CI 会额外使用 Gitleaks 扫描完整历史，但两者都
 不能替代人工隐私审查。
+
+真实的个人内容一律放在 `local/`：它被 Git 忽略，一旦被跟踪隐私检查会直接失败。
+Agent skills 默认写到那里，只有在本机显式开启后才会写入 `resume/` 和
+`interview/`：
+
+```bash
+mkdir -p local && touch local/.private-ok
+```
+
+这个标记同时会把 `privacy:check` 切到 personal 模式，私有 fork 才能提交真实邮箱和
+手机号而不让 `npm test` 变红。它只放宽联系方式两条规则，被跟踪的二进制产物、
+机器 home 路径和凭据模式仍然照拦。由于 `local/` 被忽略，标记不会跟着 fork 走，
+CI 也永远不会进入 personal 模式。
 
 ## 设计、字体与许可
 

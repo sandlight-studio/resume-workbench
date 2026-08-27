@@ -11,6 +11,12 @@ fail() {
   exit 1
 }
 
+# Personal mode relaxes the contact-detail rules so a private fork can commit a
+# real resume. It is opt-in per machine: local/ is gitignored, so the marker
+# never travels with a clone or a fork, and CI never sees it.
+PERSONAL_MODE="${RESUME_WORKBENCH_PERSONAL:-0}"
+[ -f "${PROJECT_ROOT}/local/.private-ok" ] && PERSONAL_MODE=1
+
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 \
   || fail "run this check inside a Git worktree"
 
@@ -20,21 +26,23 @@ forbidden_files="$(git ls-files | grep -Ei '(^|/)(dist|archive|local)/|\.(pdf|do
   fail "generated, local, environment, or font artifacts are tracked"
 }
 
-email_hits="$(git grep --cached -hoEI '[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,}' -- ':!scripts/privacy-check.sh' || true)"
-if [ -n "${email_hits}" ]; then
-  while IFS= read -r email; do
-    [[ "${email}" == *"@example.com" ]] || {
-      printf '%s\n' "${email}" >&2
-      fail "non-example email address found"
-    }
-  done <<< "${email_hits}"
-fi
+if [ "${PERSONAL_MODE}" != "1" ]; then
+  email_hits="$(git grep --cached -hoEI '[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,}' -- ':!scripts/privacy-check.sh' || true)"
+  if [ -n "${email_hits}" ]; then
+    while IFS= read -r email; do
+      [[ "${email}" == *"@example.com" ]] || {
+        printf '%s\n' "${email}" >&2
+        fail "non-example email address found"
+      }
+    done <<< "${email_hits}"
+  fi
 
-phone_hits="$(git grep --cached -nE '(^|[^0-9])1[3-9][0-9]{9}([^0-9]|$)' -- '*.md' '*.sh' '*.json' '*.yml' '*.yaml' || true)"
-[ -z "${phone_hits}" ] || {
-  printf '%s\n' "${phone_hits}" >&2
-  fail "possible mainland China mobile number found"
-}
+  phone_hits="$(git grep --cached -nE '(^|[^0-9])1[3-9][0-9]{9}([^0-9]|$)' -- '*.md' '*.sh' '*.json' '*.yml' '*.yaml' || true)"
+  [ -z "${phone_hits}" ] || {
+    printf '%s\n' "${phone_hits}" >&2
+    fail "possible mainland China mobile number found"
+  }
+fi
 
 path_hits="$(git grep --cached -nE '/Users/|/home/[^ /]+/' -- ':!scripts/privacy-check.sh' || true)"
 [ -z "${path_hits}" ] || {
@@ -48,4 +56,8 @@ secret_hits="$(git grep --cached -nEI '(-----BEGIN ([A-Z ]+ )?PRIVATE KEY-----|g
   fail "possible hard-coded credential found"
 }
 
-echo "Privacy checks passed."
+if [ "${PERSONAL_MODE}" = "1" ]; then
+  echo "Privacy checks passed (personal mode: contact rules relaxed)."
+else
+  echo "Privacy checks passed."
+fi

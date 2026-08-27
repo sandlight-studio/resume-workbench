@@ -1,6 +1,6 @@
 {
   "name": "resume-workbench",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "A privacy-first Markdown resume and interview-prep workbench",
   "license": "Apache-2.0",
@@ -14,7 +14,9 @@
     "build:all": "bash scripts/build-all.sh",
     "archive": "bash scripts/archive.sh default",
     "check": "bash scripts/check.sh",
+    "mine": "bash scripts/mine-commits.sh",
     "qa": "bash scripts/qa.sh",
+    "preview": "bash scripts/update-preview.sh",
     "privacy:check": "bash scripts/privacy-check.sh",
     "clean": "bash scripts/clean.sh",
     "test": "bash tests/structure-alignment.sh && bash tests/css-invariants.sh && bash tests/content-structure.sh && bash tests/privacy-check.sh && bash scripts/privacy-check.sh"

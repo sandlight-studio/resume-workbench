@@ -73,6 +73,11 @@ if (cd "${TMP_DIR}/repo" && bash scripts/build.sh default --font commercial >/de
   exit 1
 fi
 
+if (cd "${TMP_DIR}/repo" && bash scripts/build.sh default --font >/dev/null 2>&1); then
+  echo "FAIL: missing font value succeeded" >&2
+  exit 1
+fi
+
 (cd "${TMP_DIR}/repo" && bash scripts/archive.sh backend >/dev/null)
 find "${TMP_DIR}/repo/archive" -type f -name '*.pdf' | grep -q .
 

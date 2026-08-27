@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Keep assets/resume-preview.png in sync with staged resume/style changes.
+# Enable once per clone: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+ASSET="assets/resume-preview.png"
+
+# Only react when resume sources or print CSS are part of the commit.
+if [ -z "$(git diff --cached --name-only -- resume styles)" ]; then
+  exit 0
+fi
+
+# Regeneration needs the full toolchain; warn instead of blocking
+# contributors whose machines lack it.
+if ! bash "${PROJECT_ROOT}/scripts/update-preview.sh"; then
+  echo "pre-commit: preview refresh failed; run 'npm run preview' manually before pushing" >&2
+  exit 0
+fi
+
+if ! git diff --quiet -- "${ASSET}"; then
+  git add "${ASSET}"
+  echo "pre-commit: staged refreshed ${ASSET}"
+fi
