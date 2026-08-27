@@ -73,7 +73,7 @@ Native Windows is not a supported build target; use WSL2 or a Linux container.
 | `npm run build:fullstack` | Build the full-stack resume |
 | `npm run build:all` | Build every variant |
 | `npm run qa -- default` | Build and render preview images when possible |
-| `npm run mine -- --author "<you>" <repo>` | Survey your own commits in a local repository |
+| `npm run mine -- --all --author "<you>" <repo>` | Survey your own commits in a local repository |
 | `npm test` | Run structure, CSS, and privacy checks |
 
 The build script also supports a locally installed WenKai font stack:

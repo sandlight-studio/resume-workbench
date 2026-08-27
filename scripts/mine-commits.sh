@@ -7,22 +7,31 @@ set -euo pipefail
 
 MAX_SUBJECTS=200
 SINCE=""
+ALL_REFS=0
 AUTHORS=()
 REPOS=()
 
 usage() {
   cat >&2 <<'EOF'
 Usage: scripts/mine-commits.sh --author <pattern> [--author <pattern>]... \
-                               [--since <date>] [--max-subjects <n>] \
+                               [--since <date>] [--max-subjects <n>] [--all] \
                                <repo-path> [<repo-path>...]
 
   --author        Author name or email pattern. Repeat for people who commit
                   under several identities; git treats them as OR.
   --since         Passed to git log, e.g. "2 years ago" or 2024-01-01.
   --max-subjects  Commit subjects to print per repository (default 200).
+  --all           Survey every ref instead of the checked-out branch. A work
+                  checkout parked on a release or feature branch can hide a
+                  large share of the author's history; without --all the
+                  report says so rather than undercounting silently.
 
 Run `git -C <repo> shortlog -sne --all` first if you are unsure which identity
 string to match.
+
+Note for scripted use: this runs git, which does not read stdin, but wrapping
+it in `npm run mine` does — npm drains stdin and will swallow the rest of a
+`while read` loop. Call this script directly in loops, or add `</dev/null`.
 EOF
   exit 1
 }
@@ -47,6 +56,10 @@ while [[ $# -gt 0 ]]; do
       MAX_SUBJECTS="$2"
       shift 2
       ;;
+    --all)
+      ALL_REFS=1
+      shift
+      ;;
     -h|--help)
       usage
       ;;
@@ -70,6 +83,21 @@ for author in "${AUTHORS[@]}"; do
 done
 FILTER_ARGS+=(--regexp-ignore-case)
 [ -z "${SINCE}" ] || FILTER_ARGS+=("--since=${SINCE}")
+
+# Everything after this point runs through FILTER_ARGS, so the scope flag has to
+# live inside it; without --all, git log walks HEAD only.
+[ "${ALL_REFS}" = "0" ] || FILTER_ARGS+=(--all)
+
+# Same scope and window, no author filter — the denominator for commit share.
+SCOPE_ARGS=()
+[ -z "${SINCE}" ] || SCOPE_ARGS+=("--since=${SINCE}")
+[ "${ALL_REFS}" = "0" ] || SCOPE_ARGS+=(--all)
+
+count_commits() {
+  # A repository with no commits yet makes git log fail; pipefail would then
+  # abort the whole run instead of reporting an empty repository.
+  { git -C "$1" log "${@:2}" --format='%H' 2>/dev/null || true; } | wc -l | tr -d ' '
+}
 
 STACK_MARKERS=(
   package.json pom.xml go.mod Cargo.toml requirements.txt pyproject.toml
@@ -100,14 +128,28 @@ for repo in "${REPOS[@]}"; do
 
   rule
   echo "REPOSITORY: ${repo_name}"
-  echo "Branch: ${branch}"
+  if [ "${ALL_REFS}" = "1" ]; then
+    echo "Scope: all refs (checked out on ${branch})"
+  else
+    echo "Scope: HEAD only, branch ${branch}"
+  fi
   echo "Authors matched: ${AUTHORS[*]}"
   [ -z "${SINCE}" ] || echo "Since: ${SINCE}"
   rule
 
-  # A repository with no commits yet makes git log fail; pipefail would then
-  # abort the whole run instead of reporting an empty repository.
-  commit_count="$({ git -C "${repo}" log "${FILTER_ARGS[@]}" --format='%H' 2>/dev/null || true; } | wc -l | tr -d ' ')"
+  commit_count="$(count_commits "${repo}" "${FILTER_ARGS[@]}")"
+
+  # A work checkout parked on a release or feature branch hides history that is
+  # merged elsewhere. Say so with the number rather than reporting the low count
+  # as if it were the whole story.
+  if [ "${ALL_REFS}" = "0" ]; then
+    all_count="$(count_commits "${repo}" "${FILTER_ARGS[@]}" --all)"
+    if [ "${all_count}" -gt "${commit_count}" ]; then
+      echo "WARNING: ${all_count} commits match across all refs, ${commit_count} on ${branch}."
+      echo "Every figure below undercounts by $(( all_count - commit_count )). Re-run with --all."
+      echo
+    fi
+  fi
 
   if [ "${commit_count}" = "0" ]; then
     echo "No commits matched these authors."
@@ -125,8 +167,17 @@ for repo in "${REPOS[@]}"; do
   last_date="$(git -C "${repo}" log "${FILTER_ARGS[@]}" --format='%ad' --date=short | head -1 || true)"
   active_months="$(git -C "${repo}" log "${FILTER_ARGS[@]}" --format='%ad' --date=format:'%Y-%m' | sort -u | wc -l | tr -d ' ')"
 
+  # The share is what makes an ownership claim checkable, so it is computed at
+  # the same scope and window as the numerator rather than left to the reader.
+  repo_total="$(count_commits "${repo}" "${SCOPE_ARGS[@]}")"
+  if [ "${repo_total}" -gt 0 ]; then
+    share="$(awk -v n="${commit_count}" -v d="${repo_total}" 'BEGIN { printf "%.0f", n * 100 / d }')"
+  else
+    share="?"
+  fi
+
   echo "## Scale"
-  echo "Commits: ${commit_count}"
+  echo "Commits: ${commit_count}/${repo_total} (${share}%)"
   echo "First commit: ${first_date}"
   echo "Last commit: ${last_date}"
   echo "Active months: ${active_months}"

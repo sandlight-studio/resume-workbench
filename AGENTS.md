@@ -11,7 +11,7 @@ npm test
 npm run check
 npm run build:all
 npm run qa -- default
-npm run mine -- --author "<name-or-email>" <repo-path>
+npm run mine -- --all --author "<name-or-email>" <repo-path>
 ```
 
 ## Structure

@@ -39,7 +39,24 @@ Private mode unlocks `resume/` and `interview/` for *finished prose*, never for
 commit dumps. `local/` is gitignored and `scripts/privacy-check.sh` fails if
 anything under it is ever tracked, so this is enforced, not just advised.
 
-## 2. Pin down the author identity before mining
+## 2. Find the repositories before mining them
+
+When what you are handed is a set of *parent* directories rather than repo
+paths, do not glob at a fixed depth. `base/*/*/*/` matches directories *inside*
+repositories — one survey run produced 162 "repos" that collapsed to 44 once
+deduplicated. Ask git which toplevel each candidate belongs to:
+
+```bash
+for base in "$@"; do
+  find "$base" -maxdepth 4 -type d -name .git -prune 2>/dev/null \
+    | while read -r g; do git -C "${g%/.git}" rev-parse --show-toplevel; done
+done | sort -u > local/evidence/repo-list.txt
+```
+
+Keep that list on disk. It is the record of what was surveyed, and rebuilding it
+from memory after a stray `rm` in `local/` is guesswork.
+
+## 3. Pin down the author identity before mining
 
 This is where the run usually fails. One person commits under a work email, a
 personal email, a GitHub noreply address, and two spellings of their name.
@@ -52,30 +69,57 @@ Read the output and pick every string that is the same human. Do not guess from
 the user's Git config — `user.email` is what they commit as *today*, not what
 they used three jobs ago in the repo you are about to mine.
 
-## 3. Run the survey
+## 4. Run the survey
 
 ```bash
-npm run mine -- --author "<name>" --author "<email>" <repo-path> [<repo-path>...]
+npm run mine -- --all --author "<name>" --author "<email>" <repo-path> [<repo-path>...]
 ```
 
 Repeat `--author` for each identity; git ORs them. `--since "3 years ago"`
 narrows to relevant history, `--max-subjects` caps the subject dump.
 
-Redirect each repo into its own file so the raw material survives the session:
+**Pass `--all` when surveying work checkouts.** Without it git walks HEAD only,
+and a checkout parked on `release` or a feature branch hides everything merged
+elsewhere — one real repo reported 262 commits on `release` against 342 across
+all refs, a 23% undercount that reads like a finished number. The script detects
+this and prints a WARNING with the delta, but the fix is to re-run, not to
+mentally adjust.
+
+Redirect each repo into its own file so the raw material survives the session.
+Two things go wrong here, both silently:
 
 ```bash
 mkdir -p local/evidence/raw
-npm run mine -- --author "<email>" ~/code/foo > local/evidence/raw/foo.txt
+
+# Key the filename on the path, not basename — two checkouts of the same
+# upstream in different parent directories collide and one overwrites the other.
+# (macOS realpath has no --relative-to, so strip the prefix with ${var#...}.)
+key="$(printf '%s' "${repo#"$BASE_DIR"/}" | tr '/' '_')"
+
+# Call the script directly in loops. `npm run` drains stdin, so `npm run mine`
+# inside a `while read` loop eats the remaining lines and skips most repos
+# without failing. If npm is unavoidable, append `</dev/null`.
+bash scripts/mine-commits.sh --all --author "<email>" "$repo" \
+  > "local/evidence/raw/${key}.txt"
 ```
+
+After the loop, count the outputs against the repo list before reading any of
+them. A summary table built from a partially-populated directory shows real
+repos as `0%` and is indistinguishable from a finished result.
 
 The script is read-only — it only ever runs `git -C <path> log/shortlog/rev-parse`
 and never writes to the repositories it inspects, so it is safe to point at a
 work checkout with uncommitted changes.
 
+It reports commit scale as `<theirs>/<repo total> (<share>%)` at the scope and
+window you asked for. Record that share: a 46% share and an 8% share justify
+very different verbs on a resume, and it is what makes an ownership claim
+checkable.
+
 If a repo reports no matches it prints the identities it *does* contain. That is
 the answer to "why is this empty", not an error to work around.
 
-## 4. Read the code — this step is not optional
+## 5. Read the code — this step is not optional
 
 Take the "Most touched areas" list and actually open those directories: the
 README, the core module, the config, the tests. You are looking for what the log
@@ -93,7 +137,7 @@ mass reformatting all rank high and mean nothing. A 4,000-line commit that bumps
 dependencies is not a highlight. Ask the user about anything ambiguous rather
 than inventing a narrative that fits the diff.
 
-## 5. Write one evidence card per project
+## 6. Write one evidence card per project
 
 Write to `local/evidence/<project>.md`, and reuse the structure that
 `interview/story-idempotent-callback.md` already proves out:
@@ -123,14 +167,14 @@ Then tell the user where the real numbers live: monitoring dashboards, load-test
 reports, incident tickets, release notes. Mark each one as a gap to fill rather
 than leaving a blank the user will paper over later.
 
-## 6. Report what is not worth using
+## 7. Report what is not worth using
 
 Finish by naming the material you deliberately dropped and why — bulk
 refactors, dependency bumps, generated-code churn, work that was real but
 unremarkable. A person who knows which three of their eight projects carry
 weight interviews better than one handed all eight flattened to equal size.
 
-## 7. Confirm nothing leaked
+## 8. Confirm nothing leaked
 
 ```bash
 git status --short
