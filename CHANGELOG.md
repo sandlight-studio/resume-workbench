@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- **Breaking:** per-variant `npm run build:<variant>` scripts are replaced by
+  `npm run build -- <variant>`; the build usage line is generated from
+  `config/variants.sh`, so a new variant needs only a registry entry and its
+  Markdown source.
+- `npm run check` now executes the PDF engine, catching broken virtualenvs.
+- `npm run qa` drops preview pages left over from a longer previous render.
+- `npm run render:check` and a CI render job build every variant with the
+  real toolchain and fail on page overflow.
+- Dependabot for pinned GitHub Actions and WeasyPrint.
+
 ## 0.2.0 - 2026-08-27
 
 - Agent skills for the resume itself: `add-resume-variant` and

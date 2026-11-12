@@ -72,6 +72,7 @@ PDF 输出到被 Git 忽略的 `dist/`。
 | `npm run build -- <变体>` | 构建指定变体，如 `english`、`java`、`backend`、`fullstack`（清单见 `config/variants.sh`） |
 | `npm run build:all` | 构建全部岗位变体 |
 | `npm run qa -- default` | 构建简历，并在工具可用时生成预览图 |
+| `npm run render:check` | 真实构建全部变体，超出页数上限时报错 |
 | `npm run preview` | 用默认简历重新生成 `assets/resume-preview.png` |
 | `npm run mine -- --all --author "<你>" <仓库路径>` | 统计自己在本地仓库中的提交 |
 | `npm test` | 执行结构、样式和隐私检查 |

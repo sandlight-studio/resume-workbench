@@ -74,6 +74,7 @@ Native Windows is not a supported build target; use WSL2 or a Linux container.
 | `npm run build -- <variant>` | Build one variant, e.g. `english`, `java`, `backend`, `fullstack` (registry: `config/variants.sh`) |
 | `npm run build:all` | Build every variant |
 | `npm run qa -- default` | Build and render preview images when possible |
+| `npm run render:check` | Build every variant for real and fail on page overflow |
 | `npm run preview` | Regenerate `assets/resume-preview.png` from the default resume |
 | `npm run mine -- --all --author "<you>" <repo>` | Survey your own commits in a local repository |
 | `npm test` | Run structure, CSS, and privacy checks |

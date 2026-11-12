@@ -10,6 +10,8 @@ must be fictional.
 npm test
 npm run check
 npm run build:all
+npm run build -- java
+npm run render:check
 npm run qa -- default
 npm run mine -- --all --author "<name-or-email>" <repo-path>
 ```
