@@ -122,5 +122,8 @@ rather than rendering badly. Variant discovery stays in `config/variants.sh`.
 - Versions and Git tags use `x.y.z` without a `v` prefix.
 - Use Conventional Commit prefixes such as `feat:`, `fix:`, `docs:`, and
   `chore:`.
-- Open contribution PRs against `dev`. To release, open a `dev` to `main` PR,
-  wait for CI, merge, then tag the merge commit and update `CHANGELOG.md`.
+- `main` is the only long-lived branch. Work on a short-lived branch and open
+  a PR against `main`; GitHub deletes the branch after merge. To release,
+  move the `CHANGELOG.md` entries under a version heading and bump
+  `package.json` in that PR, merge once CI passes, tag the merge commit, and
+  create a GitHub Release whose notes are that CHANGELOG section.

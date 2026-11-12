@@ -110,10 +110,10 @@ local/         Your real content: evidence, interview kit, BOSS profile (ignored
 
 - `main` is the protected release branch. Direct pushes, force pushes, and
   branch deletion are blocked.
-- `dev` is the integration branch for ongoing work. Open contribution PRs
-  against `dev`.
-- For a release, open a `dev` to `main` PR, wait for CI, merge it, then tag the
-  merge commit.
+- Work on a short-lived branch and open a PR against `main`; the branch is
+  deleted automatically after merge.
+- For a release, update `CHANGELOG.md` and `package.json` in a PR, merge it
+  once CI passes, then tag the merge commit and publish a GitHub Release.
 - One-time setup: `git config core.hooksPath .githooks` enables a pre-commit
   hook that refreshes `assets/resume-preview.png` whenever a commit stages
   resume or style changes.
