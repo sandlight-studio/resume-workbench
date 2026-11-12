@@ -5,16 +5,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${PROJECT_ROOT}/config/variants.sh"
-PDF_ENGINE="${PDF_ENGINE:-weasyprint}"
+source "${SCRIPT_DIR}/lib/pdf-engine.sh"
 
 echo "Checking Resume Workbench environment..."
 command -v pandoc >/dev/null 2>&1 || { echo "Missing: pandoc" >&2; exit 1; }
 
-if ! command -v "${PDF_ENGINE}" >/dev/null 2>&1 \
-  && [ ! -x "${PROJECT_ROOT}/.venv/bin/weasyprint" ]; then
-  echo "Missing: ${PDF_ENGINE} (PATH or .venv/bin/weasyprint)" >&2
-  exit 1
-fi
+require_pdf_engine "${PROJECT_ROOT}" || exit 1
 
 for variant in "${RESUME_VARIANTS[@]}"; do
   resolve_variant "${variant}"

@@ -17,6 +17,8 @@ OUTPUT_FILE="$(cat "${BUILD_PATH_FILE}")"
 echo "QA target: ${OUTPUT_FILE}"
 if command -v pdftoppm >/dev/null 2>&1; then
   PREVIEW_ROOT="${PROJECT_ROOT}/dist/preview"
+  # Drop pages left over from a previous, longer render.
+  rm -f "${PREVIEW_ROOT}"-*.png
   pdftoppm -png -r 120 "${OUTPUT_FILE}" "${PREVIEW_ROOT}" >/dev/null 2>&1
   echo "Preview images: dist/preview-*.png"
 else

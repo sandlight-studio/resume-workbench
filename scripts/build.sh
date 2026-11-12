@@ -5,6 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${PROJECT_ROOT}/config/variants.sh"
+source "${SCRIPT_DIR}/lib/pdf-engine.sh"
 
 POSITION_KEY=""
 FONT="${FONT:-serif}"
@@ -90,12 +91,7 @@ else
   OUTPUT_FILE="${DIST_DIR}/${RESUME_NAME_ZH}-简历-${DATE}_${POSITION}${FONT_SUFFIX}_${YOE_CN}.pdf"
 fi
 
-PDF_ENGINE="${PDF_ENGINE:-weasyprint}"
-if ! command -v "${PDF_ENGINE}" >/dev/null 2>&1; then
-  if [ -x "${PROJECT_ROOT}/.venv/bin/weasyprint" ]; then
-    PDF_ENGINE="${PROJECT_ROOT}/.venv/bin/weasyprint"
-  fi
-fi
+resolve_pdf_engine "${PROJECT_ROOT}"
 
 echo "Building resume..."
 echo "  Source: resume/${SOURCE_FILE}"

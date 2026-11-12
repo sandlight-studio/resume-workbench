@@ -84,6 +84,16 @@ if (cd "${TMP_DIR}/repo" && bash scripts/build.sh default --font >/dev/null 2>&1
   exit 1
 fi
 
+broken_root="${TMP_DIR}/broken"
+mkdir -p "${broken_root}/.venv/bin"
+printf '#!/bin/bash\nexit 1\n' > "${broken_root}/.venv/bin/weasyprint"
+chmod +x "${broken_root}/.venv/bin/weasyprint"
+if (source "${ROOT}/scripts/lib/pdf-engine.sh" \
+  && PDF_ENGINE=missing-engine require_pdf_engine "${broken_root}" 2>/dev/null); then
+  echo "FAIL: broken virtualenv passed the engine check" >&2
+  exit 1
+fi
+
 (cd "${TMP_DIR}/repo" && bash scripts/archive.sh backend >/dev/null)
 find "${TMP_DIR}/repo/archive" -type f -name '*.pdf' | grep -q .
 
