@@ -5,9 +5,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${PROJECT_ROOT}/config/variants.sh"
+source "${SCRIPT_DIR}/lib/pdf-engine.sh"
 
 POSITION_KEY=""
 FONT="${FONT:-serif}"
+VARIANT_LIST="$(IFS='|'; printf '%s' "${RESUME_VARIANTS[*]}")"
+USAGE="Usage: ./scripts/build.sh [${VARIANT_LIST}] [--font serif|wenkai]"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -18,13 +21,13 @@ while [[ $# -gt 0 ]]; do
       ;;
     --*)
       echo "Error: Unsupported option '$1'." >&2
-      echo "Usage: ./scripts/build.sh <variant> [--font serif|wenkai]" >&2
+      echo "${USAGE}" >&2
       exit 1
       ;;
     *)
       if [ -n "${POSITION_KEY}" ]; then
         echo "Error: Specify exactly one resume variant." >&2
-        echo "Usage: ./scripts/build.sh <variant> [--font serif|wenkai]" >&2
+        echo "${USAGE}" >&2
         exit 1
       fi
       POSITION_KEY="$1"
@@ -37,7 +40,7 @@ case "${FONT}" in
   serif|wenkai) ;;
   *)
     echo "Error: Unsupported font '${FONT}'." >&2
-    echo "Usage: ./scripts/build.sh <variant> [--font serif|wenkai]" >&2
+    echo "${USAGE}" >&2
     exit 1
     ;;
 esac
@@ -45,7 +48,7 @@ esac
 POSITION_KEY="${POSITION_KEY:-default}"
 if ! resolve_variant "${POSITION_KEY}"; then
   echo "Error: Unsupported variant '${POSITION_KEY}'." >&2
-  echo "Usage: ./scripts/build.sh <default|java|backend|fullstack|english> [--font serif|wenkai]" >&2
+  echo "${USAGE}" >&2
   exit 1
 fi
 
@@ -88,12 +91,7 @@ else
   OUTPUT_FILE="${DIST_DIR}/${RESUME_NAME_ZH}-简历-${DATE}_${POSITION}${FONT_SUFFIX}_${YOE_CN}.pdf"
 fi
 
-PDF_ENGINE="${PDF_ENGINE:-weasyprint}"
-if ! command -v "${PDF_ENGINE}" >/dev/null 2>&1; then
-  if [ -x "${PROJECT_ROOT}/.venv/bin/weasyprint" ]; then
-    PDF_ENGINE="${PROJECT_ROOT}/.venv/bin/weasyprint"
-  fi
-fi
+resolve_pdf_engine "${PROJECT_ROOT}"
 
 echo "Building resume..."
 echo "  Source: resume/${SOURCE_FILE}"

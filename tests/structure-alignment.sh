@@ -58,6 +58,12 @@ if (cd "${TMP_DIR}/repo" && bash scripts/build.sh unknown >/dev/null 2>&1); then
   exit 1
 fi
 
+usage_output="$(cd "${TMP_DIR}/repo" && bash scripts/build.sh unknown 2>&1 || true)"
+for variant in "${RESUME_VARIANTS[@]}"; do
+  [[ "${usage_output}" == *"${variant}"* ]] \
+    || { echo "FAIL: usage omits ${variant}" >&2; exit 1; }
+done
+
 if (cd "${TMP_DIR}/repo" && bash scripts/build.sh java backend >/dev/null 2>&1); then
   echo "FAIL: multiple variants succeeded" >&2
   exit 1
@@ -75,6 +81,16 @@ fi
 
 if (cd "${TMP_DIR}/repo" && bash scripts/build.sh default --font >/dev/null 2>&1); then
   echo "FAIL: missing font value succeeded" >&2
+  exit 1
+fi
+
+broken_root="${TMP_DIR}/broken"
+mkdir -p "${broken_root}/.venv/bin"
+printf '#!/bin/bash\nexit 1\n' > "${broken_root}/.venv/bin/weasyprint"
+chmod +x "${broken_root}/.venv/bin/weasyprint"
+if (source "${ROOT}/scripts/lib/pdf-engine.sh" \
+  && PDF_ENGINE=missing-engine require_pdf_engine "${broken_root}" 2>/dev/null); then
+  echo "FAIL: broken virtualenv passed the engine check" >&2
   exit 1
 fi
 

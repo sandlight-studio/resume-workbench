@@ -11,9 +11,8 @@ ASSET_PATH="${PROJECT_ROOT}/assets/resume-preview.png"
 
 command -v pandoc >/dev/null 2>&1 || { echo "Missing: pandoc" >&2; exit 1; }
 command -v pdftoppm >/dev/null 2>&1 || { echo "Missing: pdftoppm (brew install poppler)" >&2; exit 1; }
-PDF_ENGINE="${PDF_ENGINE:-weasyprint}"
-command -v "${PDF_ENGINE}" >/dev/null 2>&1 || [ -x "${PROJECT_ROOT}/.venv/bin/weasyprint" ] \
-  || { echo "Missing: ${PDF_ENGINE} (PATH or .venv/bin/weasyprint)" >&2; exit 1; }
+source "${SCRIPT_DIR}/lib/pdf-engine.sh"
+require_pdf_engine "${PROJECT_ROOT}" || exit 1
 
 BUILD_PATH_FILE="$(mktemp)"
 cleanup() {
