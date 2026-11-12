@@ -10,7 +10,7 @@
 - `npm run qa` drops preview pages left over from a longer previous render.
 - `npm run render:check` and a CI render job build every variant with the
   real toolchain and fail on page overflow.
-- Dependabot for pinned GitHub Actions and WeasyPrint, targeting `dev`.
+- Dependabot for pinned GitHub Actions and WeasyPrint.
 - **Security:** WeasyPrint bumped to 70.0, fixing an EPS-to-Ghostscript RCE
   (high) and an SSRF (medium) present in 69.0 and earlier.
 
