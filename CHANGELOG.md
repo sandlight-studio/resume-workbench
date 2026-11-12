@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 - 2026-11-12
 
 - **Breaking:** per-variant `npm run build:<variant>` scripts are replaced by
   `npm run build -- <variant>`; the build usage line is generated from
@@ -10,7 +10,8 @@
 - `npm run qa` drops preview pages left over from a longer previous render.
 - `npm run render:check` and a CI render job build every variant with the
   real toolchain and fail on page overflow.
-- Dependabot for pinned GitHub Actions and WeasyPrint.
+- Dependabot for pinned GitHub Actions and WeasyPrint, targeting `dev`.
+- WeasyPrint bumped to 70.0.
 
 ## 0.2.0 - 2026-08-27
 
