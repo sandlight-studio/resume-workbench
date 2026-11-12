@@ -11,6 +11,7 @@
     "check": "bash scripts/check.sh",
     "mine": "bash scripts/mine-commits.sh",
     "qa": "bash scripts/qa.sh",
+    "render:check": "bash scripts/render-check.sh",
     "preview": "bash scripts/update-preview.sh",
     "privacy:check": "bash scripts/privacy-check.sh",
     "clean": "bash scripts/clean.sh",
