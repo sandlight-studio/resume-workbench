@@ -11,7 +11,8 @@
 - `npm run render:check` and a CI render job build every variant with the
   real toolchain and fail on page overflow.
 - Dependabot for pinned GitHub Actions and WeasyPrint, targeting `dev`.
-- WeasyPrint bumped to 70.0.
+- **Security:** WeasyPrint bumped to 70.0, fixing an EPS-to-Ghostscript RCE
+  (high) and an SSRF (medium) present in 69.0 and earlier.
 
 ## 0.2.0 - 2026-08-27
 
