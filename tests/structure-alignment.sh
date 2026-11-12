@@ -58,6 +58,12 @@ if (cd "${TMP_DIR}/repo" && bash scripts/build.sh unknown >/dev/null 2>&1); then
   exit 1
 fi
 
+usage_output="$(cd "${TMP_DIR}/repo" && bash scripts/build.sh unknown 2>&1 || true)"
+for variant in "${RESUME_VARIANTS[@]}"; do
+  [[ "${usage_output}" == *"${variant}"* ]] \
+    || { echo "FAIL: usage omits ${variant}" >&2; exit 1; }
+done
+
 if (cd "${TMP_DIR}/repo" && bash scripts/build.sh java backend >/dev/null 2>&1); then
   echo "FAIL: multiple variants succeeded" >&2
   exit 1

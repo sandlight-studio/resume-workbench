@@ -1,14 +1,14 @@
 ---
 name: add-resume-variant
-description: Add a new position-specific resume variant to Resume Workbench (a new entry in config/variants.sh, a new Markdown file under resume/zh/ or resume/en/, an npm build script, and both README command tables). Use this whenever someone wants a resume for a role the repo doesn't cover yet — "add a data engineering resume", "I need a variant for SRE roles", "make a product manager version", "新增一个算法岗简历" — or asks why `npm test` fails after they hand-edited config/variants.sh. The four edits are coupled and the required section names live only in the test suite, so doing this from memory reliably breaks the build.
+description: Add a new position-specific resume variant to Resume Workbench (a new entry in config/variants.sh plus a new Markdown file under resume/zh/ or resume/en/). Use this whenever someone wants a resume for a role the repo doesn't cover yet — "add a data engineering resume", "I need a variant for SRE roles", "make a product manager version", "新增一个算法岗简历" — or asks why `npm test` fails after they hand-edited config/variants.sh. The registry entry and the Markdown file must agree, and the required section names live only in the test suite, so doing this from memory reliably breaks the build.
 ---
 
 # Add a resume variant
 
-A variant is not a single file. It is one entry that four different places have
-to agree on: the variant registry, the Markdown source, the npm script, and the
-two README tables. Miss one and either the test suite fails or the variant
-exists but nobody can discover it.
+A variant is two coupled edits: an entry in the variant registry and the
+Markdown source it points to. Everything else — `npm run build -- <key>`,
+`build:all`, the build script's usage line, `npm run check`, and the test
+suite — reads the registry, so nothing else needs editing.
 
 Work in this order — each step depends on the one before it.
 
@@ -72,28 +72,11 @@ template. If the request is to add a variant filled with someone's real
 history, add the variant with fictional placeholder content and tell them to
 personalize it in a private fork or an ignored `local/` directory.
 
-## 4. Wire up the npm script
-
-In `package.json`, add to `scripts`, keeping the existing ordering:
-
-```json
-    "build:data": "bash scripts/build.sh data",
-```
-
-`build:all` needs no change — `scripts/build-all.sh` loops over
-`RESUME_VARIANTS`, so step 2a already covered it.
-
-## 5. Update both README command tables
-
-`README.md` and `README.zh-CN.md` each carry a command table. Add a row to
-both, matching the surrounding language. A variant that only appears in the
-English README is effectively invisible to half the audience.
-
-## 6. Verify
+## 4. Verify
 
 ```bash
 npm test
-npm run build:data
+npm run build -- data
 ```
 
 `npm test` is the real gate. `tests/structure-alignment.sh` stubs out pandoc

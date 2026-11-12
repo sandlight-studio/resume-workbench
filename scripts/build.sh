@@ -8,6 +8,8 @@ source "${PROJECT_ROOT}/config/variants.sh"
 
 POSITION_KEY=""
 FONT="${FONT:-serif}"
+VARIANT_LIST="$(IFS='|'; printf '%s' "${RESUME_VARIANTS[*]}")"
+USAGE="Usage: ./scripts/build.sh [${VARIANT_LIST}] [--font serif|wenkai]"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -18,13 +20,13 @@ while [[ $# -gt 0 ]]; do
       ;;
     --*)
       echo "Error: Unsupported option '$1'." >&2
-      echo "Usage: ./scripts/build.sh <variant> [--font serif|wenkai]" >&2
+      echo "${USAGE}" >&2
       exit 1
       ;;
     *)
       if [ -n "${POSITION_KEY}" ]; then
         echo "Error: Specify exactly one resume variant." >&2
-        echo "Usage: ./scripts/build.sh <variant> [--font serif|wenkai]" >&2
+        echo "${USAGE}" >&2
         exit 1
       fi
       POSITION_KEY="$1"
@@ -37,7 +39,7 @@ case "${FONT}" in
   serif|wenkai) ;;
   *)
     echo "Error: Unsupported font '${FONT}'." >&2
-    echo "Usage: ./scripts/build.sh <variant> [--font serif|wenkai]" >&2
+    echo "${USAGE}" >&2
     exit 1
     ;;
 esac
@@ -45,7 +47,7 @@ esac
 POSITION_KEY="${POSITION_KEY:-default}"
 if ! resolve_variant "${POSITION_KEY}"; then
   echo "Error: Unsupported variant '${POSITION_KEY}'." >&2
-  echo "Usage: ./scripts/build.sh <default|java|backend|fullstack|english> [--font serif|wenkai]" >&2
+  echo "${USAGE}" >&2
   exit 1
 fi
 
